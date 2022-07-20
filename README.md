@@ -2,4 +2,4 @@
 BI-PA2 semestral work
 
 
-To run chess run the command make run
+To run chess run the command **make run**
