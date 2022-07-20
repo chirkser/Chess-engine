@@ -3,3 +3,75 @@ BI-PA2 semestral work
 
 
 To run chess run the command **make run**
+
+
+## Šachy 
+Autor: Sergei Chirkov
+
+## Téma z Progtestu
+
+Klasická hra Šachy (příp. libovolná varianta - asijské šachy, ...)
+
+Implementujte následující varianty:
+
+pro 2 hráče na jednom počítači
+pro hru proti počítači
+Hra musí splňovat následující funkcionality:
+
+Dodržování všech pravidel dané varianty (u klasické varianty tedy i rošáda, braní mimochodem, proměna pěšce).
+Ukládání (resp. načítání) rozehrané hry do (resp. ze) souboru (vytvořte vhodný formát a uživatelské rozhraní)
+Oznamovat stav a konec hry (šach, mat, pat) a její výsledek.
+Umělá inteligence (škálovatelná nebo alespoň 3 různé druhy, jeden druh můžou být náhodné tahy, ale nestačí implementovat pouze náhodné tahy)
+Kde lze využít polymorfismus? (doporučené)
+
+Ovládání hráčů: lokální hráč, umělá inteligence (různé druhy), síťový hráč
+Pohyby figurek: král, dáma, věž, jezdec,...
+Uživatelské rozhraní: konzolové, ncurses, SDL, OpenGL (různé druhy),...
+Pravidla různých variant: klasické šachy, žravé šachy, asijské šachy
+Jednotlivá pravidla: tahy, rošáda, braní mimochodem, proměna (jejich výběr pak může být konfigurovatelný)
+
+##
+
+Jako téma své semestrální práce jsem si vybral šachovou hru. Budu implementovat pouze klasická pravidla.
+Rozhodl jsem se obejít bez grafických knihoven, takže hra bude vykreslována v konzoli, kde diky if/out streamu uživatelé budou komunikovat se systémem, provádět tahy, ukládat/načítat šachové partie. 
+Mám v plánu vytvořit hru reálného hráče proti počítači a dvou reálných hráčů proti sobě. Počítačový hráč bude mít několik úrovní obtížnosti.
+
+Všechny příkazy, které uživatel uvidí:
+- New game, vytvoří novou hru, aplikace se dotáže na další parametry
+- Move [tah], hráč provede tah
+- Undo, odvolat poslední tah
+- Save [filename], uloží hru do souboru
+- Load, uživatel uvidí všechny existující soubory a zadá požadovaný název.
+- Help [command], vypsat příručku příkazů
+- Quit, ukončí program
+  
+Přibližný pohled konzoli během hry:
+Commands: (N)ew game	(M)ove	(U)ndo	(S)ave	(L)oad	(H)elp	(Q)uit
+Type here:
+$ N
+Select mode: (2P) 2 players	(C[1][2][3]) vs Computer   | [levels of difficulty]
+$  C1
+  ABCDEFGH
+ ----------			
+8|rnbqkbnr|8
+7|pppppppp|7
+6|........|6
+5|........|5
+4|........|4
+3|........|3
+2|pppppppp|2
+1|rnbqkbnr|1
+ ----------
+  ABCDEFGH
+Commands: (N)ew game	(M)ove	(U)ndo	(S)ave	(L)oad	(H)elp	(Q)uit
+$ M e2e3
+
+
+Všechny příkazy budou implementovány třídou CMessangeHandler, ktera provede správnou akci na základě zprávy uživatele. Třida CGame je zodpovědna za spuštění hry. CFileManager se postará o ukládání a nahravani herních desek uživatele.
+Myslím, že hlavní třída je CBoard, která bude ukládat aktuální stav hry a aktualizovat/změňovat data na hrací ploše. CUserInterface je třida, zodpovědna za zobrazování všech zpráv v konzole.  
+
+##  Polymorfismus
+
+- Rozhodl jsem se aplikovat polymorfismus na pohyby figurek, proto budu ukladat herní plochu do map<char, map<int, CPiece>>. Udělám parent class CPiece pro dědice CKing, CQueen, CBishop, CKnight, CRook, CPawn, CSpace.
+
+- Další případ polymorfismusu v mé architektuře je ovládání hráčů. CPlayerReal a CPlayerComputer budou dědici CPlayer. Třída CPlayer má polymorfní metodu makeTurn(), ktera přijme příkaz od uživatele prostřednictvím konzoly a provede pohyb. Implementace pro Computer vypočítá novou pozici z aktuální situace na herni desce.
